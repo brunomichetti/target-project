@@ -1,0 +1,34 @@
+version: 2 # use CircleCI 2.0
+jobs: # A basic unit of work in a run
+  build: # runs not using Workflows must have a `build` job as entry point 
+    # directory where steps are run
+    working_directory: ~/target-project/
+    docker: # run the steps with Docker
+      # CircleCI Python images available at: https://hub.docker.com/r/circleci/python/
+      - image: circleci/python:3.7.2
+        environment: # environment variables for primary container
+
+          CIRCLECI: true
+          PIPENV_VENV_IN_PROJECT: true
+          DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
+      - image: mdillon/postgis:9.6
+        environment:
+          POSTGRES_USER: circleci
+          POSTGRES_DB: circle_test
+    steps: # steps that comprise the `build` job
+      - checkout # check out source code to working directory
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
+      - run: sudo apt-get update
+      - run: sudo apt-get install libgdal-dev
+      - run: gdal-config --version  # to see what version of GDAL you have
+      - run: export CPLUS_INCLUDE_PATH=/usr/include/gdal
+      - run: export C_INCLUDE_PATH=/usr/include/gdal
+      - run:
+          command: |
+            #sudo pip install pipenv
+            #pipenv install
+            sudo pip install -r requirements.txt
+      - run:
+          command: |
+            python manage.py test

@@ -1,6 +1,6 @@
 [
 {
-    "model": "auth.user",
+    "model": "users.CustomUser",
     "pk": 1,
     "fields": {
         "password": "pbkdf2_sha256$120000$rsp66Isf41zj$ItJ1acdDP2O5lv8zqxK+o3iDT7+W4dzheUOU7MgKsIA=",
@@ -18,7 +18,7 @@
     }
 },
 {
-    "model": "auth.user",
+    "model": "users.CustomUser",
     "pk": 5,
     "fields": {
         "password": "pbkdf2_sha256$120000$VQPNxMAOKR51$KaZacJ8DoLG7AcFbztbr1oqgld6JRdxPnQXquqiYtg4=",
@@ -36,7 +36,7 @@
     }
 },
 {
-    "model": "auth.user",
+    "model": "users.CustomUser",
     "pk": 3,
     "fields": {
         "password": "not_hashed_pass",

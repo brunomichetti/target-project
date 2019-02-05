@@ -65,3 +65,23 @@ class SignUpTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['name'][0]
                          [0:], 'This field is required.')
+
+
+class LogoutTestCase(TestCase):
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
+        self.client = Client()
+        call_command(
+            'loaddata',
+            'users/fixtures/users-fixture.json'
+        )
+
+    def test_correct_logout(self):
+        response = self.client.post(
+            '/rest-auth/login/', {'password': 'usertest1pass', 'email': 'usertest1@mail.com'})
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/rest-auth/logout/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['detail']
+                         , 'Successfully logged out.')

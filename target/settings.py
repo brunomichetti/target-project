@@ -40,10 +40,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+    'rest_auth.registration',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
-    'rest_auth.registration',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
     'users',
 ]
 
@@ -149,7 +151,30 @@ ACCOUNT_UNIQUE_EMAIL = True
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    # 'social_core.backends.facebook.FacebookOAuth2',
 )
+
+SOCIALACCOUNT_PROVIDERS = \
+    {'facebook':
+     {'METHOD': 'oauth2',
+      'SCOPE': ['email', 'public_profile', 'user_friends'],
+      'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+      'FIELDS': [
+          'id',
+          'email',
+          'name',
+          'first_name',
+          'last_name',
+          'verified',
+          'locale',
+          'timezone',
+          'link',
+          'gender',
+          'updated_time'],
+      'EXCHANGE_TOKEN': True,
+      'LOCALE_FUNC': lambda request: 'kr_KR',
+      'VERIFIED_EMAIL': False,
+      'VERSION': 'v2.4'}}
 
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.SignUpSerializer',

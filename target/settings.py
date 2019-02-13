@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_gis',
     'rest_framework.authtoken',
     'rest_auth',
     'rest_auth.registration',
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'users',
+    'targets',
 ]
 
 SITE_ID = 1
@@ -80,8 +82,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'target.wsgi.application'
-
-
 
 
 # Password validation
@@ -179,3 +179,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
+
+SPATIALITE_LIBRARY_PATH = 'mod_spatialite'

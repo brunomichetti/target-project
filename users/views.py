@@ -4,6 +4,7 @@ from rest_framework import status
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from rest_auth.registration.views import SocialLoginView, APIView
 from rest_framework.permissions import IsAuthenticated
+from django.utils.functional import SimpleLazyObject
 
 from users.serializers import UpdateProfileSerializer
 from users.models import CustomUser
@@ -19,7 +20,9 @@ class CustomUserView(APIView):
 
     def put(self, request, format=None):
         serializer = UpdateProfileSerializer(data=request.data)
-        current_user = request.user._wrapped
+        current_user = request.user
+        if isinstance(current_user, SimpleLazyObject):
+            current_user = current_user._wrapped
         if current_user.is_authenticated and serializer.is_valid():
             for key in request.data:
                 if key in current_user.__dict__:

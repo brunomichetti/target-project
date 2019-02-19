@@ -3,12 +3,13 @@ from django.utils.decorators import method_decorator
 from rest_framework import serializers
 from rest_auth.registration.serializers import RegisterSerializer
 
+from users.apps import GENDER_CHOICES
 from users.models import CustomUser
 
 
 class SignUpSerializer(RegisterSerializer):
     name = serializers.CharField(max_length=150)
-    gender = serializers.CharField(max_length=1)
+    gender = serializers.ChoiceField(choices=GENDER_CHOICES)
 
     @transaction.atomic
     def save(self, request):
@@ -21,13 +22,8 @@ class SignUpSerializer(RegisterSerializer):
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=150, required=False)
-    gender = serializers.CharField(max_length=1, required=False)
+    gender = serializers.ChoiceField(choices=GENDER_CHOICES, required=False)
 
     class Meta:
         model = CustomUser
         fields = ('name', 'gender')
-
-    def validate_gender(self, gender):
-        if not gender in ('M', 'F'):
-            raise serializers.ValidationError('This field must be M or F.')
-        return gender

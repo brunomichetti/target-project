@@ -5,9 +5,11 @@ from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from rest_auth.registration.views import SocialLoginView, APIView
 from rest_framework.permissions import IsAuthenticated
 from django.utils.functional import SimpleLazyObject
+from django.http import JsonResponse
 
 from users.serializers import UpdateProfileSerializer
 from users.models import CustomUser
+
 
 
 class FacebookLogin(SocialLoginView):
@@ -32,6 +34,9 @@ class CustomUserView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
+
+def confirm_email(request, key):   
+    return JsonResponse({"key" : key})
 
 def facebook_login(request):
     return render(request, 'facebook-test.html', {})

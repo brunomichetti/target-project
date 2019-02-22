@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import path
 
 from users.views import facebook_login, CustomUserView
 
 urlpatterns = [    
-    url(r'^facebook-login/', facebook_login),
-    url(r'', CustomUserView.as_view()),
+    path('facebook-login/', facebook_login),
+    path('', CustomUserView.as_view(), name='account_email_verification_sent'),
 ]

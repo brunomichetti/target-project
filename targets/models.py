@@ -1,5 +1,4 @@
 from django.db import models
-
 from django.contrib.gis.db.models import PointField
 
 from users.models import CustomUser

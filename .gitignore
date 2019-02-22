@@ -3,3 +3,4 @@
 .vscode
 .vscode/launch.json
 target/db_config.py
+local_settings.py

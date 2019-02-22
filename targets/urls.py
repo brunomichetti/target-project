@@ -1,7 +1,8 @@
-from django.conf.urls import url
+from django.urls import path
 
-from targets.views import TargetView
+from targets.views import TargetView, TargetMatchView
 
-urlpatterns = [    
-    url(r'', TargetView.as_view()),
+urlpatterns = [
+    path('', TargetView.as_view()),
+    path('matches/', TargetMatchView.as_view())
 ]

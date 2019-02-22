@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from drf_extra_fields.geo_fields import PointField
 
-from targets.models import Target
+from targets.models import Target, Match
 from targets.apps import TOPIC_CHOICES
 
 
@@ -21,3 +21,10 @@ class TargetSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'radius must be equal or higher than 0.')
         return value
+
+
+class MatchSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Match
+        fields = ('target_1', 'target_2', 'topic')

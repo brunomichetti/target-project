@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 
 from targets.views import TargetView
 
 urlpatterns = [    
-    url(r'', TargetView.as_view()),
+    path('', TargetView.as_view()),
 ]

@@ -31,6 +31,13 @@ class SetUpUsersTestsClass(TestCase):
         return self.client.put(
             '/users/', data={"name": new_name, "gender": new_gender}, content_type='application/json')
 
+    def send_email_for_password_reset(self, email):
+        return self.client.post('/rest-auth/password/reset/', {'email': email})
+
+    def reset_password(self, uid, token, new_password1, new_password2):
+        return self.client.post('/rest-auth/password/reset/confirm/', {'uid': uid, 'token': token, 
+                                    'new_password1': new_password1, 'new_password2': new_password2})
+
 @override_settings(
     ACCOUNT_EMAIL_VERIFICATION='optional')
 class LoginTestCase(SetUpUsersTestsClass):
@@ -137,3 +144,41 @@ class TestUpdateProfile(SetUpUsersTestsClass):
         current_user = CustomUser.objects.get(email='usertest1@mail.com')
         self.assertEqual(current_user.name, 'User ForTest')
         self.assertEqual(current_user.gender, 'F')
+
+
+@override_settings(
+    ACCOUNT_EMAIL_VERIFICATION='optional')
+class TestResetPassword(SetUpUsersTestsClass):
+
+    def test_correct_reset_password(self):
+        response = self.send_email_for_password_reset('usertest1@mail.com')
+        self.assertEqual(response.data['detail'],
+                         'Password reset e-mail has been sent.')
+        uid_reset = response.context['uid']
+        token_reset = response.context['token']
+        response = self.reset_password(uid_reset, token_reset,
+                                       'new_pass_for_test1', 'new_pass_for_test1')
+        self.assertEqual(response.status_code, 200)
+        response = self.login('usertest1@mail.com', 'new_pass_for_test1')
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_matching_password_reset_error(self):
+        response = self.send_email_for_password_reset('usertest1@mail.com')
+        uid_reset = response.context['uid']
+        token_reset = response.context['token']
+        response = self.reset_password(uid_reset, token_reset,
+                                       'new_pass_for_test1', 'new_pass_for_test1_not_matching')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['new_password2'][0]
+                         [0:], "The two password fields didn't match.")
+
+    def test_incorrect_token_reset_password_error(self):
+        response = self.send_email_for_password_reset('usertest1@mail.com')
+        uid_reset = response.context['uid']
+        token_reset = response.context['token']
+        token_reset = token_reset + 'incorrect'
+        response = self.reset_password(uid_reset, token_reset,
+                                       'new_pass_for_test1', 'new_pass_for_test1')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['token'][0]
+                         [0:], 'Invalid value')

@@ -68,7 +68,8 @@ ROOT_URLCONF = 'target.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'templates', 'allauth'), os.path.join(BASE_DIR, 'templates', 'registration')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),
+                 os.path.join(BASE_DIR, 'templates', 'allauth')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,18 +88,20 @@ WSGI_APPLICATION = 'target.wsgi.application'
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
+COMMON = 'django.contrib.auth.password_validation'
+
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': f'{COMMON}.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': f'{COMMON}.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': f'{COMMON}.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': f'{COMMON}.NumericPasswordValidator',
     },
 ]
 
@@ -131,16 +134,10 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
 # reset password policies
+OLD_PASSWORD_FIELD_ENABLED = True
 LOGOUT_ON_PASSWORD_CHANGE = False
 
-
 # email confirmation
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'target.app.manager@gmail.com'
-EMAIL_HOST_PASSWORD = 'target-app'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_SUBJECT_PREFIX = 'Target App '
 
@@ -178,9 +175,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 if os.getenv('CIRCLECI', False):
     from target.circleci_settings import *
 else:
-    from target.settings import *
-    # Database
-    from target.db_config import *
+    from local_settings import *
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (

@@ -21,9 +21,14 @@ from users.views import FacebookLogin, confirm_email
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('django.contrib.auth.urls')),
     path('rest-auth/registration/account-confirm-email/<str:key>/',
          confirm_email),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('rest-auth/account-confirm-email/', VerifyEmailView.as_view(),
+         name='account_email_verification_sent'),
+    path('rest-auth/password/reset/',
+         PasswordResetView.as_view(), name='password_reset'),
     path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
     path('rest-auth/', include('rest_auth.urls')),
     path('users/', include('users.urls')),

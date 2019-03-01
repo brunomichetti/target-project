@@ -72,7 +72,10 @@ class TargetView(APIView):
         for current_t in not_user_targets:
             if self.targets_match(target, current_t):
                 new_match = Match(
-                    target_1=target, target_2=current_t, topic=target.topic)
+                    target_1=target,
+                    target_2=current_t,
+                    topic=target.topic
+                )
                 new_match.save()
 
     def targets_match(self, t1, t2):
@@ -97,5 +100,22 @@ class TargetMatchView(APIView):
                 matches = matches | matches_of_target
             serializer = MatchSerializer(matches, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+class TargetDetailView(APIView):
+
+    serializer_class = TargetSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def delete(self, request, pk, format=None):
+        current_user = get_user_request(request)
+        if (current_user.is_authenticated and
+                Target.objects.filter(
+                    Q(user_id=current_user.id) & Q(id=pk)
+                    )):
+            Target.objects.filter(id=pk).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)

@@ -175,7 +175,6 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 if os.getenv('CIRCLECI', False):
     from target.circleci_settings import *
 else:
-    from target.settings import *
     from local_settings import *
 
 REST_FRAMEWORK = {

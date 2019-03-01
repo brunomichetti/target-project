@@ -56,6 +56,7 @@ class SetUpUsersTestsClass(TestCase):
                 )
 
 
+
 @override_settings(
     ACCOUNT_EMAIL_VERIFICATION='optional')
 class LoginTestCase(SetUpUsersTestsClass):

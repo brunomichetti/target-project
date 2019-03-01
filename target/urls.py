@@ -16,8 +16,6 @@ Including another URLconf
 from django.urls import include, path
 from django.conf.urls import url
 from django.contrib import admin
-from rest_auth.registration.views import VerifyEmailView
-from rest_auth.views import PasswordResetView
 
 from users.views import FacebookLogin, confirm_email
 

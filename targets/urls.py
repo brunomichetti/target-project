@@ -1,5 +1,6 @@
 from django.urls import path
 
+
 from targets.views import TargetView, TargetMatchView, TargetDetailView
 
 urlpatterns = [

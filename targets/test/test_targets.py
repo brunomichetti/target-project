@@ -4,10 +4,12 @@ import json
 from rest_framework.test import APITestCase
 from django.contrib.gis.geos import Point
 
+
 from users.factory import CustomUserFactory
 from targets.apps import TOPIC_CHOICES, NUMBER_OF_TOPICS
 from targets.factory import TargetFactory
 from targets.models import Target, Match
+
 
 
 class CreateTargetTestCase(APITestCase):
@@ -145,3 +147,4 @@ class DeleteTargetTestCase(APITestCase):
             self.client.delete('/targets/' + delete_id)
         self.assertEqual(Target.objects.count(), 10)
         self.assertEqual(Match.objects.count(), 0)
+

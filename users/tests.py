@@ -2,8 +2,8 @@ from django.core.management import call_command
 from django.test import TestCase, Client
 from django.test.utils import override_settings
 
-from users.models import CustomUser
 from target import settings
+from users.models import CustomUser
 
 
 class SetUpUsersTestsClass(TestCase):
@@ -19,42 +19,41 @@ class SetUpUsersTestsClass(TestCase):
 
     def login(self, email, password):
         return self.client.post(
-                        '/rest-auth/login/',
-                        {'email': email, 'password': password}
-                    )
+            '/rest-auth/login/',
+            {'email': email, 'password': password}
+        )
 
     def signup(self, email, password1, password2, name, gender):
         return self.client.post(
-                        '/rest-auth/registration/',
-                        {'email': email,
-                         'password1': password1,
-                         'password2': password2,
-                         'name': name,
-                         'gender': gender}
-                    )
+            '/rest-auth/registration/',
+            {'email': email,
+             'password1': password1,
+             'password2': password2,
+             'name': name,
+             'gender': gender}
+        )
 
     def logout(self):
         return self.client.post('/rest-auth/logout/')
 
     def update_logged_user(self, new_name, new_gender):
         return self.client.put(
-                        '/users/',
-                        data={"name": new_name, "gender": new_gender},
-                        content_type='application/json'
-                    )
+            '/rest-auth/user/',
+            data={"name": new_name, "gender": new_gender},
+            content_type='application/json'
+        )
 
     def send_email_for_password_reset(self, email):
         return self.client.post('/rest-auth/password/reset/', {'email': email})
 
     def reset_password(self, uid, token, new_password1, new_password2):
         return self.client.post(
-                '/rest-auth/password/reset/confirm/',
-                {'uid': uid,
-                 'token': token,
-                 'new_password1': new_password1,
-                 'new_password2': new_password2}
-                )
-
+            '/rest-auth/password/reset/confirm/',
+            {'uid': uid,
+             'token': token,
+             'new_password1': new_password1,
+             'new_password2': new_password2}
+        )
 
 
 @override_settings(
@@ -115,12 +114,12 @@ class SignUpTestCase(SetUpUsersTestsClass):
 
     def test_missing_fields_sign_up_error(self):
         response = self.client.post(
-                            '/rest-auth/registration/',
-                            {'email': 'new-user@mail.com',
-                             'password1': 'new-user-pass',
-                             'password2': 'different-pass',
-                             'gender': 'M'}
-                        )
+            '/rest-auth/registration/',
+            {'email': 'new-user@mail.com',
+             'password1': 'new-user-pass',
+             'password2': 'different-pass',
+             'gender': 'M'}
+        )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['name'][0]
                          [0:], 'This field is required.')
@@ -158,8 +157,11 @@ class TestUpdateProfile(SetUpUsersTestsClass):
     def test_correct_update_profile_with_missing_field(self):
         response = self.login('usertest1@mail.com', 'usertest1pass')
         self.assertEqual(response.status_code, 200)
-        response = self.client.put('/users/', data={"name": "New Name"},
-                                   content_type='application/json')
+        response = self.client.put(
+            '/rest-auth/user/',
+            data={"name": "New Name"},
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 200)
         current_user = CustomUser.objects.get(email='usertest1@mail.com')
         self.assertEqual(current_user.name, 'New Name')
@@ -169,7 +171,7 @@ class TestUpdateProfile(SetUpUsersTestsClass):
         response = self.login('usertest1@mail.com', 'usertest1pass')
         self.assertEqual(response.status_code, 200)
         response = self.update_logged_user('New Name', 'Wrong')
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
         current_user = CustomUser.objects.get(email='usertest1@mail.com')
         self.assertEqual(current_user.name, 'User ForTest')
         self.assertEqual(current_user.gender, 'F')
@@ -187,11 +189,11 @@ class TestResetPassword(SetUpUsersTestsClass):
         uid_reset = response.context['uid']
         token_reset = response.context['token']
         response = self.reset_password(
-                    uid_reset,
-                    token_reset,
-                    'new_pass_for_test1',
-                    'new_pass_for_test1'
-                )
+            uid_reset,
+            token_reset,
+            'new_pass_for_test1',
+            'new_pass_for_test1'
+        )
         self.assertEqual(response.status_code, 200)
         response = self.login('usertest1@mail.com', 'new_pass_for_test1')
         self.assertEqual(response.status_code, 200)
@@ -201,10 +203,10 @@ class TestResetPassword(SetUpUsersTestsClass):
         uid_reset = response.context['uid']
         token_reset = response.context['token']
         response = self.reset_password(
-                    uid_reset, token_reset,
-                    'new_pass_for_test1',
-                    'new_pass_for_test1_not_matching'
-                )
+            uid_reset, token_reset,
+            'new_pass_for_test1',
+            'new_pass_for_test1_not_matching'
+        )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['new_password2'][0]
                          [0:], "The two password fields didn't match.")
@@ -215,11 +217,11 @@ class TestResetPassword(SetUpUsersTestsClass):
         token_reset = response.context['token']
         token_reset = token_reset + 'incorrect'
         response = self.reset_password(
-                    uid_reset,
-                    token_reset,
-                    'new_pass_for_test1',
-                    'new_pass_for_test1'
-                )
+            uid_reset,
+            token_reset,
+            'new_pass_for_test1',
+            'new_pass_for_test1'
+        )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['token'][0]
                          [0:], 'Invalid value')

@@ -1,15 +1,13 @@
-import random
 import json
+import random
 
-from rest_framework.test import APITestCase
 from django.contrib.gis.geos import Point
+from rest_framework.test import APITestCase
 
-
-from users.factory import CustomUserFactory
 from targets.apps import TOPIC_CHOICES, NUMBER_OF_TOPICS
-from targets.factory import TargetFactory
+from targets.factory import TargetFactory, MatchFactory
 from targets.models import Target, Match
-
+from users.factory import CustomUserFactory
 
 
 class CreateTargetTestCase(APITestCase):
@@ -36,8 +34,8 @@ class CreateTargetTestCase(APITestCase):
 
     def test_correct_create_target(self):
         self.client.force_authenticate(  # pylint: disable=no-member
-                user=self.user1
-            )
+            user=self.user1
+        )
         response = self.client.post('/targets/', self.data, format='json')
         self.assertEqual(response.status_code, 201)
 
@@ -49,7 +47,9 @@ class CreateTargetTestCase(APITestCase):
         user_targets = Target.objects.filter(user_id=self.user2.id)
         self.assertEqual(user_targets.count(), 10)
         self.assertEqual(
-            response.data, "Users can't register more than 10 targets.")
+            response.data['non_field_errors'][0][0:],
+            "Users can't register more than 10 targets."
+        )
 
     def test_missing_field_error(self):
         self.data = {
@@ -101,7 +101,7 @@ class DeleteTargetTestCase(APITestCase):
         delete_id = str(target2.id) + '/'
         self.client.force_authenticate(self.user1)  # pylint: disable=no-member
         response = self.client.delete('/targets/' + delete_id)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(Target.objects.count(), 2)
 
     def test_delete_not_existing_target(self):
@@ -109,42 +109,29 @@ class DeleteTargetTestCase(APITestCase):
         self.client.force_authenticate(self.user1)  # pylint: disable=no-member
         delete_id = str(self.target.id + 1) + '/'
         response = self.client.delete('/targets/' + delete_id)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(Target.objects.count(), 1)
 
     def test_delete_10_targets_and_100_matches(self):
+        Target.objects.filter(id=self.target.id).delete()
         fixed_topic = TOPIC_CHOICES[random.randint(0, NUMBER_OF_TOPICS-1)][0]
-        fixed_position = Point(
-            random.uniform(-100, 100),
-            random.uniform(-100, 100)
-        )
-        fixed_radius = random.uniform(1, 20)
-        TargetFactory.create_batch(
+        x = random.uniform(-2.0, 2.0)
+        y = random.uniform(-2.0, 2.0)
+        targets_user1 = TargetFactory.create_batch(
             10,
             user=self.user1,
             topic=fixed_topic,
-            position=fixed_position
+            position=Point(x, y)
         )
-        self.client.force_authenticate(self.user2)  # pylint: disable=no-member
-        new_data = {
-                'position': json.dumps(
-                    {"longitude": fixed_position[1],
-                     "latitude": fixed_position[0]}
-                     ),
-                'radius_in_m': fixed_radius,
-                'topic': fixed_topic,
-                'title': 'title',
-            }
-        for i in range(10):
-            self.client.post('/targets/', new_data, format='json')
-        self.assertEqual(Target.objects.count(), 21)
+        targets_user2 = TargetFactory.create_batch(
+            10,
+            user=self.user2,
+            topic=fixed_topic,
+            position=Point(x, y)
+        )
         self.assertEqual(Match.objects.count(), 100)
-        self.client.logout
         self.client.force_authenticate(self.user1)  # pylint: disable=no-member
-        targets_user_1 = Target.objects.filter(user=self.user1)
-        for t in targets_user_1:
+        for t in targets_user1:
             delete_id = str(t.id) + '/'
             self.client.delete('/targets/' + delete_id)
-        self.assertEqual(Target.objects.count(), 10)
         self.assertEqual(Match.objects.count(), 0)
-

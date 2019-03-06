@@ -1,27 +1,27 @@
-import random
 import json
+import random
 
+from django.contrib.gis.geos import Point
 from django.test import TestCase
 from rest_framework.test import APITestCase
-from django.contrib.gis.geos import Point
 
 from targets.apps import TOPIC_CHOICES, NUMBER_OF_TOPICS
-from users.factory import CustomUserFactory
 from targets.factory import TargetFactory
 from targets.models import Target, Match
+from users.factory import CustomUserFactory
 
 
 class CreateMatchesTestCase(APITestCase):
 
     def setUp(self):
         self.user1 = CustomUserFactory(
-                        username='user1test',
-                        email='user1@test.com'
-                    )
+            username='user1test',
+            email='user1@test.com'
+        )
         self.user2 = CustomUserFactory(
-                        username='user2test',
-                        email='user2@test.com'
-                    )
+            username='user2test',
+            email='user2@test.com'
+        )
         self.data_t1_u1 = {
             'position': json.dumps({"longitude": 1, "latitude": 1}),
             'radius_in_m': 5.1,
@@ -71,11 +71,11 @@ class CreateMatchesTestCase(APITestCase):
             x = random.uniform(-2.0, 2.0)
             y = random.uniform(-2.0, 2.0)
             TargetFactory.create(
-                            user=self.user1,
-                            topic=fixed_topic,
-                            position=Point(x, y),
-                            radius_in_m=random.uniform(5.0, 20.0)
-                        )
+                user=self.user1,
+                topic=fixed_topic,
+                position=Point(x, y),
+                radius_in_m=random.uniform(5.0, 20.0)
+            )
         targets_data_u2 = []
         for i in range(10):
             x = random.uniform(-2.0, 2.0)

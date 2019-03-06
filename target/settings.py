@@ -168,8 +168,12 @@ SOCIALACCOUNT_PROVIDERS = \
       'VERIFIED_EMAIL': False,
       'VERSION': 'v2.4'}}
 
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserProfileSerializer'
+}
+
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'users.serializers.SignUpSerializer',
+    'REGISTER_SERIALIZER': 'users.serializers.SignUpSerializer'
 }
 
 if os.getenv('CIRCLECI', False):

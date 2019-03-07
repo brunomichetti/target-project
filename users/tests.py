@@ -23,14 +23,15 @@ class SetUpUsersTestsClass(TestCase):
             {'email': email, 'password': password}
         )
 
-    def signup(self, email, password1, password2, name, gender):
+    def signup(self, email, password1, password2, name, gender, id_n):
         return self.client.post(
             '/rest-auth/registration/',
             {'email': email,
              'password1': password1,
              'password2': password2,
              'name': name,
-             'gender': gender}
+             'gender': gender,
+             'id_notifications': id_n}
         )
 
     def logout(self):
@@ -77,7 +78,7 @@ class SignUpTestCase(SetUpUsersTestsClass):
 
     def test_correct_sign_up(self):
         response = self.signup('new-user@mail.com', 'new-user-pass',
-                               'new-user-pass', 'New User', 'M')
+                               'new-user-pass', 'New User', 'M', 'testtoken')
         confirmation_key = response.context['key']
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['detail'], 'Verification e-mail sent.')
@@ -90,7 +91,7 @@ class SignUpTestCase(SetUpUsersTestsClass):
 
     def test_email_not_verified_error(self):
         response = self.signup('new-user@mail.com', 'new-user-pass',
-                               'new-user-pass', 'New User', 'M')
+                               'new-user-pass', 'New User', 'M', 'testtoken')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['detail'], 'Verification e-mail sent.')
         response = self.login('new-user@mail.com', 'new-user-pass')
@@ -99,7 +100,7 @@ class SignUpTestCase(SetUpUsersTestsClass):
 
     def test_already_registered_error(self):
         response = self.signup('usertest1@mail.com', 'new-user-pass',
-                               'new-user-pass', 'New User', 'M')
+                               'new-user-pass', 'New User', 'M', 'testtoken')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['email'][0][0:],
                          'A user is already registered '
@@ -107,7 +108,7 @@ class SignUpTestCase(SetUpUsersTestsClass):
 
     def test_not_matching_passwords_error(self):
         response = self.signup('new-user@mail.com', 'new-user-pass',
-                               'different-pass', 'New User', 'M')
+                               'different-pass', 'New User', 'M', 'testtoken')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors']
                          [0][0:], "The two password fields didn't match.")

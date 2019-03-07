@@ -5,5 +5,7 @@ from users.apps import GENDER_CHOICES
 
 
 class CustomUser(AbstractUser):
+
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     name = models.CharField(max_length=150)
+    id_notifications = models.CharField(max_length=200, blank=True, null=True)

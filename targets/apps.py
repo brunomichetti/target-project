@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 
 
 class TargetsConfig(AppConfig):
+
     name = 'targets'
 
 
@@ -23,6 +24,7 @@ NUMBER_OF_TOPICS = len(TOPIC_CHOICES)
 
 
 class TargetsConfig(AppConfig):
+
     name = 'targets'
 
     def ready(self):

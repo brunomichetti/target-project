@@ -16,10 +16,12 @@ Including another URLconf
 from django.urls import include, path
 from django.conf.urls import url
 from django.contrib import admin
+from django.views.generic import TemplateView
 from rest_auth.registration.views import VerifyEmailView
 from rest_auth.views import PasswordResetView
 
-from users.views import FacebookLogin, confirm_email
+
+from users.views import FacebookLogin, confirm_email, test_one_signal
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,4 +37,19 @@ urlpatterns = [
     path('rest-auth/', include('rest_auth.urls')),
     path('users/', include('users.urls')),
     path('targets/', include('targets.urls')),
+]
+
+urlpatterns += [
+    path('manifest.json', TemplateView.as_view(
+        template_name='onesignal/manifest.json',
+        content_type='application/json')
+        ),
+    path('OneSignalSDKWorker.js', TemplateView.as_view(
+        template_name='onesignal/OneSignalSDKWorker.js',
+        content_type='application/x-javascript')
+        ),
+    path('OneSignalSDKWorker.js', TemplateView.as_view(
+        template_name='onesignal/OneSignalSDKWorker.js',
+        content_type='application/x-javascript')
+        ),
 ]

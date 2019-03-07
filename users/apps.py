@@ -11,4 +11,6 @@ GENDER_CHOICES = (
     ('F', _('Female')),
 )
 
+NUMBER_OF_GENDERS = len(GENDER_CHOICES)
+
 MAX_TARGETS_PER_USER = 10

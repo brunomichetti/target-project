@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
+from django.db.models.signals import post_save
 
 
 class TargetsConfig(AppConfig):
@@ -19,3 +20,12 @@ TOPIC_CHOICES = (
 )
 
 NUMBER_OF_TOPICS = len(TOPIC_CHOICES)
+
+
+class TargetsConfig(AppConfig):
+    name = 'targets'
+
+    def ready(self):
+        from .signals import generate_matches
+        from .models import Target
+        post_save.connect(generate_matches, sender=Target)

@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.gis.db.models import PointField
 
-from users.models import CustomUser
 from targets.apps import TOPIC_CHOICES
+from users.models import CustomUser
 
 
 class Target(models.Model):

@@ -1,11 +1,11 @@
-import random
 import factory
+import random
 
 from django.contrib.gis.geos import Point
 
+from targets.apps import TOPIC_CHOICES, NUMBER_OF_TOPICS
 from targets.models import Target
 from users.factory import CustomUserFactory
-from targets.apps import TOPIC_CHOICES, NUMBER_OF_TOPICS
 
 
 class TargetFactory(factory.DjangoModelFactory):
@@ -20,3 +20,10 @@ class TargetFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = Target
+
+
+class MatchFactory(factory.DjangoModelFactory):
+
+    target_1 = factory.SubFactory(TargetFactory)
+    target_2 = factory.SubFactory(TargetFactory)
+    topic = TOPIC_CHOICES[random.randint(0, NUMBER_OF_TOPICS-1)][0]

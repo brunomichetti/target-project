@@ -8,6 +8,7 @@ from users.apps import MAX_TARGETS_PER_USER
 
 
 class TargetSerializer(serializers.ModelSerializer):
+
     title = serializers.CharField(max_length=60)
     topic = serializers.ChoiceField(choices=TOPIC_CHOICES)
     position = PointField()

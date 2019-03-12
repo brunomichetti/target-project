@@ -8,6 +8,7 @@ from users.views import get_user_request
 
 
 class TargetView(generics.ListCreateAPIView):
+
     queryset = Target.objects.all()
     serializer_class = TargetSerializer
     permission_classes = (IsAuthenticated, )
@@ -39,6 +40,7 @@ class TargetMatchesView(generics.ListAPIView):
 
 
 class TargetDetailView(generics.DestroyAPIView):
+
     queryset = Target.objects.all()
     serializer_class = TargetSerializer
     permission_classes = (IsAuthenticated,)

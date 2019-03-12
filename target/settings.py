@@ -134,7 +134,6 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
 # reset password policies
-OLD_PASSWORD_FIELD_ENABLED = True
 LOGOUT_ON_PASSWORD_CHANGE = False
 
 # email confirmation
@@ -145,6 +144,9 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
+
+# fb backend testing
+FB_APP_ID = os.getenv('FB_APP_ID')
 
 SOCIALACCOUNT_PROVIDERS = \
     {'facebook':
@@ -188,3 +190,7 @@ REST_FRAMEWORK = {
 }
 
 SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
+
+# one signal id's for push notifications
+ONE_SIGNAL_APP_ID = os.getenv('ONE_SIGNAL_APP_ID')
+ONE_SIGNAL_AUTH_KEY = os.getenv('ONE_SIGNAL_AUTH_KEY')

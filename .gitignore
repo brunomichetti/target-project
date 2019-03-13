@@ -3,3 +3,4 @@
 .vscode
 .vscode/launch.json
 local_settings.py
+dump.rdb

@@ -30,6 +30,7 @@ jobs: # A basic unit of work in a run
       - run: gdal-config --version  # to see what version of GDAL you have
       - run: export CPLUS_INCLUDE_PATH=/usr/include/gdal
       - run: export C_INCLUDE_PATH=/usr/include/gdal
+      - run: sudo apt-get install redis-server
       - run:
           command: |
             #sudo pip install pipenv
@@ -37,4 +38,6 @@ jobs: # A basic unit of work in a run
             sudo pip install -r requirements.txt
       - run:
           command: |
-            python manage.py test
+            #python manage.py test users targets
+            sudo redis-server --daemonize yes && pytest
+

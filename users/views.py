@@ -1,6 +1,7 @@
 
 from allauth.socialaccount.providers.facebook.views import (
-    FacebookOAuth2Adapter)
+    FacebookOAuth2Adapter
+    )
 from django.utils.functional import SimpleLazyObject
 from django.http import JsonResponse
 from django.shortcuts import render

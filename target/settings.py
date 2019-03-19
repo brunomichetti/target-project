@@ -180,11 +180,6 @@ REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.SignUpSerializer'
 }
 
-if os.getenv('CIRCLECI', False):
-    from target.circleci_settings import *
-else:
-    from local_settings import *
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -207,3 +202,15 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# Configure Django App for Heroku.
+if os.getenv('DYNO'):
+    django_heroku.settings(locals(), test_runner=False)
+    exec(open('/app/target/heroku_settings.py').read())
+    # Heroku settings must be run not imported
+    # this is due to certain declarations of
+    # variables.
+elif os.getenv('CIRCLECI', False):
+    from target.circleci_settings import *
+else:
+    from target.local_settings import *

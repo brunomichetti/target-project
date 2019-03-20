@@ -16,21 +16,30 @@ import django_heroku
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '7#*td9%47t%yrvr&q)*rdjpfl$nw45lyh2krw-r-7c(8k)+(a7'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'channels',
     'django.contrib.admin',
@@ -86,7 +95,51 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'target.wsgi.application'
+ASGI_APPLICATION = 'target.routing.application'
 
+
+# Internationalization
+# https://docs.djangoproject.com/en/1.11/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.11/howto/static-files/
+
+
+# auth settings
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# use email auth instead of username
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+
+# email confirmation
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = 'Target App '
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+
+
+# reset password policies
+LOGOUT_ON_PASSWORD_CHANGE = False
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -109,48 +162,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.11/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
-
-STATIC_URL = '/static/'
-
-AUTH_USER_MODEL = 'users.CustomUser'
-
-# use email auth instead of username
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
-
-# reset password policies
-LOGOUT_ON_PASSWORD_CHANGE = False
-
-# email confirmation
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_EMAIL_SUBJECT_PREFIX = 'Target App '
-
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
-
-# fb backend testing
+# fb backend  app id
 FB_APP_ID = os.getenv('FB_APP_ID')
-
 SOCIALACCOUNT_PROVIDERS = \
     {'facebook':
      {'METHOD': 'oauth2',
@@ -187,14 +200,16 @@ REST_FRAMEWORK = {
     )
 }
 
+
 SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
+
 
 # one signal id's for push notifications
 ONE_SIGNAL_APP_ID = os.getenv('ONE_SIGNAL_APP_ID')
 ONE_SIGNAL_AUTH_KEY = os.getenv('ONE_SIGNAL_AUTH_KEY')
 
-# channels config
-ASGI_APPLICATION = 'target.routing.application'
+
+# ws settings
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -204,13 +219,12 @@ CHANNEL_LAYERS = {
     },
 }
 
+
 # Configure Django App for Heroku.
 if os.getenv('DYNO'):
     django_heroku.settings(locals(), test_runner=False)
     exec(open('/app/target/heroku_settings.py').read())
     # Heroku settings must be run not imported
-    # this is due to certain declarations of
-    # variables.
 elif os.getenv('CIRCLECI', False):
     from target.circleci_settings import *
 else:

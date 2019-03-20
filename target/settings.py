@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
+    'chat',
     'users',
     'targets',
 ]
@@ -194,3 +196,14 @@ SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
 # one signal id's for push notifications
 ONE_SIGNAL_APP_ID = os.getenv('ONE_SIGNAL_APP_ID')
 ONE_SIGNAL_AUTH_KEY = os.getenv('ONE_SIGNAL_AUTH_KEY')
+
+# channels config
+ASGI_APPLICATION = 'target.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

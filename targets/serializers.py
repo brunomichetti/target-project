@@ -40,4 +40,4 @@ class MatchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Match
-        fields = ('target_1', 'target_2', 'topic')
+        fields = ('target_1', 'target_2', 'topic',)

@@ -14,3 +14,5 @@ ONESIGNAL = {
     'app_id': '',
     'api_auth_key': ''
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

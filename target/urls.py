@@ -13,12 +13,44 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.urls import include, path
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import include
+from django.views.generic import TemplateView
+from rest_auth.registration.views import VerifyEmailView
+from rest_auth.views import PasswordResetView
+
+
+from users.views import FacebookLogin, confirm_email, test_one_signal
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^rest-auth/', include('rest_auth.urls')),
-    url(r'^rest-auth/registration/', include('rest_auth.registration.urls'))
+    path('admin/', admin.site.urls),
+    path('', include('django.contrib.auth.urls')),
+    path('rest-auth/registration/account-confirm-email/<str:key>/',
+         confirm_email),
+    path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('rest-auth/account-confirm-email/', VerifyEmailView.as_view(),
+         name='account_email_verification_sent'),
+    path('rest-auth/password/reset/',
+         PasswordResetView.as_view(), name='password_reset'),
+    path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
+    path('rest-auth/', include('rest_auth.urls')),
+    path('users/', include('users.urls')),
+    path('targets/', include('targets.urls')),
+    path('chat/', include('chat.urls')),
+]
+
+urlpatterns += [
+    path('manifest.json', TemplateView.as_view(
+        template_name='onesignal/manifest.json',
+        content_type='application/json')
+        ),
+    path('OneSignalSDKWorker.js', TemplateView.as_view(
+        template_name='onesignal/OneSignalSDKWorker.js',
+        content_type='application/x-javascript')
+        ),
+    path('OneSignalSDKWorker.js', TemplateView.as_view(
+        template_name='onesignal/OneSignalSDKWorker.js',
+        content_type='application/x-javascript')
+        ),
 ]

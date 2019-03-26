@@ -11,7 +11,7 @@ class SignUpSerializer(RegisterSerializer):
 
     name = serializers.CharField(max_length=150)
     gender = serializers.ChoiceField(choices=GENDER_CHOICES)
-    id_notifications = serializers.CharField(max_length=200)
+    id_notifications = serializers.CharField(max_length=200, required=False)
 
     @transaction.atomic
     def save(self, request):
@@ -28,7 +28,8 @@ class CustomUserProfileSerializer(UserDetailsSerializer):
     email = serializers.CharField(read_only=True)
     name = serializers.CharField(max_length=150, required=False)
     gender = serializers.ChoiceField(choices=GENDER_CHOICES, required=False)
+    id_notifications = serializers.CharField(max_length=200, required=False)
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'name', 'gender')
+        fields = ('email', 'name', 'gender', 'id_notifications')

@@ -1,7 +1,6 @@
 from django.db import models
 from rest_framework.pagination import PageNumberPagination
 
-
 from targets.models import Match
 from users.models import CustomUser
 
@@ -19,6 +18,7 @@ class MatchMessage(models.Model):
         on_delete=models.CASCADE,
         related_name='creator'
     )
+    seen_at = models.DateTimeField(null=True, default=None)
 
 
 class MessageResultsSetPagination(PageNumberPagination):

@@ -1,8 +1,10 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+import datetime
 
 from chat.models import MatchMessage
 from targets.models import Match
+from targets.signals import send_msg_notification_to_users
 from users.models import CustomUser
 
 
@@ -35,18 +37,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
-        new_msg = MatchMessage(
+        match_msg = MatchMessage(
             in_match=self.match,
             content=message,
             sent_by=self.user
         )
-        new_msg.save()
-
+        match_msg.save()
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
+                'msg_id': match_msg.id,
                 'message': message,
                 'user_id': self.user.id,
                 'user_name': self.user.name
@@ -57,8 +59,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         message = event['message']
         if event['user_id'] == self.user.id:
+            if (self.channel_layer.receive_count == 0):
+                if (self.match.target_1.user_id != self.user.id):
+                    other_user_id = self.match.target_1.user_id
+                else:
+                    other_user_id = self.match.target_2.user_id
+                send_msg_notification_to_users(
+                    event['user_name'],
+                    other_user_id,
+                    message,
+                    datetime.datetime.now()
+                )
             message = 'You : ' f'{message}'
         else:
+            MatchMessage.objects.filter(id=event['msg_id']).update(
+                seen_at=datetime.datetime.now()
+            )
             message = f"{event['user_name']}" " : " f"{message}"
         # Send message to WebSocket
         await self.send(text_data=json.dumps({

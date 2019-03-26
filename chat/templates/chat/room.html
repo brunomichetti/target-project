@@ -43,5 +43,9 @@
 
         messageInputDom.value = '';
     };
+
+    {% for msj in previous_messages  %}
+        document.querySelector('#chat-log').value += ('{{msj}}' + '\n');
+    {% endfor %}
 </script>
 </html>

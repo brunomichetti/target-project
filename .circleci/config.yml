@@ -11,14 +11,6 @@ jobs: # A basic unit of work in a run
           CIRCLECI: true
           PIPENV_VENV_IN_PROJECT: true
           DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
-
-          FB_APP_ID: '263232724590644'
-          
-          ONE_SIGNAL_APP_ID : '7c595075-ffcc-4986-b80c-9ddfaf941d43'
-          ONE_SIGNAL_AUTH_KEY : 'NWUzNTM0YmItY2JlNC00OTBhLThiMDYtNTQxN2FmNDUyNWZj'
-
-          EMAIL_HOST_USER : 'target.app.manager@gmail.com'
-          EMAIL_HOST_PASSWORD : 'target-app'
           
       - image: mdillon/postgis:9.6
         environment:
@@ -37,12 +29,8 @@ jobs: # A basic unit of work in a run
       - run: sudo apt-get install redis-server
       - run:
           command: |
-            #sudo pip install pipenv
-            #pipenv install
             sudo pip install -r requirements.txt
       - run:
           command: |
-            #python manage.py test users targets
-            #sudo redis-server --daemonize yes &&
             python manage.py test
 

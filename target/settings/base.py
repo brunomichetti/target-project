@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -218,14 +217,3 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-
-# Configure Django App for Heroku.
-if os.getenv('DYNO'):
-    django_heroku.settings(locals(), test_runner=False)
-    exec(open('/app/target/heroku_settings.py').read())
-    # Heroku settings must be run not imported
-elif os.getenv('CIRCLECI', False):
-    from target.circleci_settings import *
-else:
-    from target.local_settings import *

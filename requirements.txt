@@ -23,7 +23,7 @@ django-localflavor==2.2
 django-onesignal==1.0.0
 django-rest-auth==0.9.5
 django-storages==1.7.1
-djangorestframework==3.9.2
+djangorestframework==3.11.2
 djangorestframework-gis==0.14
 djangorestframework-jwt==1.11.0
 docutils==0.15.2
